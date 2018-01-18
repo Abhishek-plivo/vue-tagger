@@ -57,7 +57,8 @@ export default {
         this.tags,
         this.visibleTags,
         function (arrVal, othVal){
-          if (arrVal === self.liquidTagOpen + othVal + self.liquidTagClose)
+          if (self.liquidTagOpen + arrVal.name + self.liquidTagClose
+            ===  othVal.name){
             return true
           return false
         }).map(tag => tag.name)
