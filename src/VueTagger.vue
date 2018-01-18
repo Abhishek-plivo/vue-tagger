@@ -12,7 +12,7 @@
 <script>
 import fuzzysearch from 'fuzzysearch'
 import Awesomplete from 'awesomplete'
-import differenceBy from 'lodash.differenceby'
+import differenceWith from 'lodash.differencewith'
 export default {
   name: 'VueTagger',
   props: {
