@@ -52,7 +52,15 @@ export default {
   },
   computed: {
     autocompleteList () {
-      return differenceBy(this.tags, this.visibleTags, 'name').map(tag => tag.name)
+      let self = this
+      return differenceWith(
+        this.tags,
+        this.visibleTags,
+        function (arrVal, othVal){
+          if (arrVal === self.liquidTagOpen + othVal + self.liquidTagClose)
+            return true
+          return false
+        }).map(tag => tag.name)
     },
     visibleTags () {
       return this.tagList.filter(tag => tag.selected)
