@@ -33,6 +33,14 @@ export default {
     placeholder: {
       type: String,
       default: 'Enter a tag...'
+    },
+    liquidTagOpen: {
+      type: String,
+      default: '{{'
+    },
+    liquidTagClose: {
+      type: String,
+      default: '}}'
     }
   },
   data () {
@@ -65,10 +73,14 @@ export default {
   },
   methods: {
     initAwesomplete () {
+      let self = this
       this.awesomplete = new Awesomplete(this.$refs['vue-tagger-input'], {
         autoFirst: true,
         filter (text, input) {
-          return fuzzysearch(input.toLowerCase(), text.toLowerCase())
+          return fuzzysearch(
+            input.toLowerCase(),
+            self.liquidTagOpen+text.toLowerCase()+self.liquidTagClose
+          )
         },
         list: this.autocompleteList
       })
@@ -76,7 +88,7 @@ export default {
         setTimeout(() => {
           let tagName = e.text.value.trim()
           if (this.varKeys[tagName]) {
-            tagName = '{{' + tagName + '}}'
+            tagName = this.liquidTagOpen + tagName + this.liquidTagClose
           }
           this.addTag(tagName)
           setTimeout(() => {
