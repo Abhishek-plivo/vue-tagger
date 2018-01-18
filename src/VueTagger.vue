@@ -21,6 +21,11 @@ export default {
       required: true,
       default: []
     },
+    varKeys: {
+      type: Object,
+      required: false,
+      default: {}
+    },
     delimiter: {
       type: String,
       default: ','
@@ -69,7 +74,10 @@ export default {
       })
       window.addEventListener('awesomplete-select', (e) => {
         setTimeout(() => {
-          const tagName = e.text.value.trim()
+          let tagName = e.text.value.trim()
+          if (this.varKeys[tagName]) {
+            tagName = '{{' + tagName + '}}'
+          }
           this.addTag(tagName)
           setTimeout(() => {
             this.currentTag = ''
