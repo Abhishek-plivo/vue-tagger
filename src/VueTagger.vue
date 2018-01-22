@@ -5,7 +5,7 @@
     <span class="vue-tagger-delete-tag" @click="deleteTag(tag)">&times;</span>
   </span>
   <div class="vue-tagger-input-container">
-    <input class="vue-tagger-input" v-model="currentTag" @blur="blur" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="placeholder" ref="vue-tagger-input" />
+    <input class="vue-tagger-input" v-model="currentTag" @blur="blur" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="newPlaceholder" ref="vue-tagger-input" />
   </div>
 </div>
 </template>
@@ -49,6 +49,7 @@ export default {
       isHovered: false,
       awesomplete: null,
       currentTag: '',
+      newPlaceholder: this.placeholder,
       tagList: [].concat(this.tags)
     }
   },
@@ -72,7 +73,6 @@ export default {
     this.initAwesomplete()
     let self = this
     this.$root.centralBus.$on('refreshTags', function(strArray) {
-      console.log('refresh')
       self.deleteAllTag()
       self.addAllTag(strArray)
     })
@@ -86,6 +86,10 @@ export default {
       this.awesomplete.list = this.autocompleteList
     },
     tagList () {
+      this.newPlaceholder = this.placeholder
+      if (this.tagList.length > 0) {
+        this.newPlaceholder = ''
+      }
       this.$emit('change', JSON.parse(JSON.stringify(this.visibleTags)).map(tag => tag.name))
       this.awesomplete.list = this.autocompleteList
     }
