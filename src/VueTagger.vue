@@ -1,11 +1,11 @@
 <template>
-<div class="vue-tagger">
+<div class="vue-tagger" v-bind:class="{'hovered':isHovered,'focused':isFocused}" @click='shiftFocus()' @mouseleave='unhover()' @mouseover='hover()'>
   <span class="vue-tagger-tag" v-for="(tag, index) in visibleTags" :key="tag.name">
     <span class="vue-tagger-tag-name">{{ tag.name }}</span>
     <span class="vue-tagger-delete-tag" @click="deleteTag(tag)">&times;</span>
   </span>
   <div class="vue-tagger-input-container">
-    <input class="vue-tagger-input" v-model="currentTag" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="placeholder" ref="vue-tagger-input" />
+    <input class="vue-tagger-input" v-model="currentTag" @blur="blur" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="placeholder" ref="vue-tagger-input" />
   </div>
 </div>
 </template>
@@ -45,6 +45,8 @@ export default {
   },
   data () {
     return {
+      isFocused: false,
+      isHovered: false,
       awesomplete: null,
       currentTag: '',
       tagList: [].concat(this.tags)
@@ -68,6 +70,15 @@ export default {
   },
   mounted () {
     this.initAwesomplete()
+    let self = this
+    this.$root.centralBus.$on('refreshTags', function(strArray) {
+      console.log('refresh')
+      self.deleteAllTag()
+      self.addAllTag(strArray)
+    })
+    this.$root.centralBus.$on('addTags', function(strArray) {
+      self.addAllTag(strArray)
+    })
   },
   watch: {
     tags () {
@@ -129,6 +140,8 @@ export default {
     },
     addTag (name) {
       const tagIndex = this.getTagIndexByName(name)
+      if (this.varKeys[name])
+        name = this.liquidTagOpen + name + this.liquidTagClose
       if (tagIndex !== -1) {
         this.tagList.splice(tagIndex, 1)
         this.tagList.push({ name: name, selected: true })
@@ -143,7 +156,32 @@ export default {
       const index = this.tagList.findIndex(t => t.name === tag.name)
       this.removeTagAtIndex(index)
       this.$refs['vue-tagger-input'].focus()
+    },
+    deleteAllTag () {
+      this.tagList = []
+    },
+    addAllTag (strArray) {
+      for (var i = 0; i < strArray.length; i++) {
+        if (strArray[i].trim().length > 0) {
+          this.addTag(strArray[i])
+          console.log('addTag' + strArray[i]);
+        }
+      }
+    },
+    shiftFocus () {
+      this.$refs['vue-tagger-input'].focus()
+      this.isFocused = true
+    },
+    blur () {
+      this.isFocused = false
+    },
+    unhover () {
+      this.isHovered = false
+    },
+    hover () {
+      this.isHovered = true
     }
+
   }
 }
 </script>
