@@ -177,6 +177,12 @@ export default {
       this.isFocused = true
     },
     blur () {
+      if (this.currentTag.trim().length != '') {
+        this.addTag(this.currentTag)
+        this.currentTag = ''
+      }else{
+        this.currentTag = this.currentTag.trim()
+      }
       this.isFocused = false
     },
     unhover () {
