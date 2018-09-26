@@ -5,7 +5,7 @@
     <span class="vue-tagger-delete-tag" @click="deleteTag(tag)">&times;</span>
   </span>
   <div class="vue-tagger-input-container">
-    <input class="vue-tagger-input" v-model="currentTag" @blur="blur" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="newPlaceholder" ref="vue-tagger-input" />
+    <input class="vue-tagger-input" v-model="currentTag" @blur="blur" @keypress="onKeypress" type="text" @keydown.delete.stop="onDeletePressed" :placeholder="newPlaceholder" ref="vue-tagger-input" @paste.prevent="onPaste" />
   </div>
 </div>
 </template>
@@ -190,8 +190,11 @@ export default {
     },
     hover () {
       this.isHovered = true
+    },
+    onPaste(e) {
+      let paste = (e.clipboardData).getData('text')
+      this.addAllTag(paste.split(','))
     }
-
   }
 }
 </script>
